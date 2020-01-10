@@ -1,95 +1,95 @@
 <!doctype html>
 <html>
   <head>
-    <title>Socket.IO chat</title>
+    <title>Portal</title>
     <style>
-    body{
-    font-family: 'Nunito';
-}
+      body{
+        font-family: 'Nunito';
+      }
 
-h2{
-    font-size: 18px;
-    padding: 10px 20px;
-    color: #575ed8;
-}
+      h2{
+        font-size: 18px;
+        padding: 10px 20px;
+        color: #575ed8;
+      }
 
-#portal-description{
-    font-size: 14px;
-    padding: 10px 20px;
-    color: #000;
-}
+      #portal-description{
+        font-size: 14px;  
+        padding: 10px 20px;    
+        color: #000;
+      }
 
-#chat{
-    max-width: 600px;
-    margin: 30px auto;
-    border: 1px solid #ddd;
-    box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
-    border-radius: 2px;
-}
+      #chat{
+          max-width: 600px;
+          margin: 30px auto;
+          border: 1px solid #ddd;
+          box-shadow: 1px 3px 5px rgba(0,0,0,0.05);
+          border-radius: 2px;
+      }
 
-#chat-window{
-    height: 400px;
-    overflow: auto;
-    background: #f5f5f5;
-}
-
-
-#portal-window{
-    height: 200px;
-    overflow: auto;
-    background: #f5f5f5;
-}
-
-#output p{
-    padding: 14px 0px;
-    margin: 0 20px;
-    border-bottom: 1px solid #e9e9e9;
-    color: #555;
-}
+      #chat-window{
+          height: 400px;
+          overflow: auto;
+          background: #f5f5f5;
+      }
 
 
-#portals button:hover{
-  background-color: #7579ce;
-}
+      #portal-window{
+          height: 200px;
+          overflow: auto;
+          background: #f5f5f5;
+      }
 
-#feedback p{
-    color: #aaa;
-    padding: 14px 0px;
-    margin: 0 20px;
-}
+      #output p{
+          padding: 14px 0px;
+          margin: 0 20px;
+          border-bottom: 1px solid #e9e9e9;
+          color: #555;
+      }
 
-#output strong{
-    color: #575ed8;
-}
 
-label{
-    box-sizing: border-box;
-    display: block;
-    padding: 10px 20px;
-}
+      #portals button:hover{
+        background-color: #7579ce;
+      }
 
-input{
-    padding: 10px 20px;
-    box-sizing: border-box;
-    background: #eee;
-    border: 0;
-    display: block;
-    width: 100%;
-    background: #fff;
-    border-bottom: 1px solid #eee;
-    font-family: Nunito;
-    font-size: 16px;
-}
+      #feedback p{
+          color: #aaa;
+          padding: 14px 0px;
+          margin: 0 20px;
+      }
 
-button{
-    background: #575ed8;
-    color: #fff;
-    font-size: 18px;
-    border: 0;
-    padding: 12px 0;
-    width: 100%;
-    border-radius: 0 0 2px 2px;
-}
+      #output strong{
+          color: #575ed8;
+      }
+
+      label{
+          box-sizing: border-box;
+          display: block;
+          padding: 10px 20px;
+      }
+
+      input{
+          padding: 10px 20px;
+          box-sizing: border-box;
+          background: #eee;
+          border: 0;
+          display: block;
+          width: 100%;
+          background: #fff;
+          border-bottom: 1px solid #eee;
+          font-family: Nunito;
+          font-size: 16px;
+      }
+
+      button{
+          background: #575ed8;
+          color: #fff;
+          font-size: 18px;
+          border: 0;
+          padding: 12px 0;
+          width: 100%;
+          border-radius: 0 0 2px 2px;
+      }
     </style>
 
     <script src="/socket.io/socket.io.js"></script>
@@ -103,7 +103,7 @@ button{
   <body>
     
     <div id="chat">
-      <h2>My Chat</h2>
+      <h2>My Chat</h2><p id="userCount" style="float: right;padding-right: 10px;">0 users</p>
       <p id="portal-description">This is a good portal</p>
       <div id="chat-window">
           <div id="output"></div>
@@ -126,42 +126,34 @@ button{
     <button id="send">Join</button>
 </div>
 
-    
+    <!-- main scripts -->
     <script>
         $(function () {
           var socket = io();
 
-          $('#message').keypress(function (e) {
-            
+          //When message textbox is interacted with
+          $('#message').keypress(function (key) {       
             //Check if typing
             if ($('#message').val() != '') {
               socket.emit('typing', $('#username').val());
-
-            }
-            else{
-              //$('#username').attr("placeholder", "Must have a Username!")
-              //$('#username').attr("::placeholder").css("color", "red")
             }
 
-            if (e.which == 13) {
+            //If enter is pressed
+            if (key.which == 13) {
               sendMessage();
-    
-              
             }
           });
-
-          
-
+         
+          //Send message when send button is clicked
           $('#send').click(function(e){
-            sendMessage();
-            
+            sendMessage();  
           });
 
-          //Receive message
+          //Receive and display message
           socket.on('chat message', function(msg){
             $('#message').val('');
             $('#feedback').text('');
-            $('#output').append('<p><strong>' + msg.userName + ': </strong>' + msg.message + '</p>');
+            $('#output').append('<p><strong>' + msg.userName + ' </strong><span style="color:#bbb; float: right; padding-right:10px;">' + msg.time + '</span><br>' + msg.message + '</p>');
 
             //Scroll to bottom of chat window
             $("#chat-window").animate({
@@ -179,43 +171,126 @@ button{
               }, 50);
           });
 
-          
+          //Update user count
+          socket.on('user count', function(data){
+            //userCount += data;
+            $("#userCount").text(data + ' users')
+            console.log(data + ' users');
+          });
+
+          //Load Messages
+          socket.on('load messages', function(data){
+            if ($('#output').html() == "") {
+              console.log('loading messages');
+              if (data != null) {
+                for (let index = 0; index < data.length; index++) {
+                $('#output').append('<p><strong>' + data[index].userName + ' </strong><span style="color:#bbb; float: right; padding-right:10px;">' + data[index].time + '</span><br>' + data[index].message + '</p>');
+                
+                }
+              }           
+            }
+            
+          });
+
+        //Sends message to server
         function sendMessage() {
           if ($('#username').val() != '') {
             if ($('#message').val() != '') {
               socket.emit('chat message', {
-              message:  $('#message').val(),
-              userName: $('#username').val(),
-            });
-            }
-              
+                message:  $('#message').val(),
+                userName: $('#username').val(),
+                time: time = getCurrentTime(),
+              });
+            //console.log(time);
+            }              
           }
           else{
+            //Throw error if no username is inputted
             alert("You must have a username!");
           }
         }
 
+        //Returns Date & Time 
+        //e.g 01/01/2020 09:00
+        function getCurrentTime() {
+          var currentDate = new Date(); 
+          var dateTime = currentDate.getDate().toLocaleString('en-GB', {minimumIntegerDigits: 2, useGrouping:false}) + "/"
+                + (currentDate.getMonth()+1).toLocaleString('en-GB', {minimumIntegerDigits: 2, useGrouping:false})  + "/" 
+                + currentDate.getFullYear() + " "  
+                + currentDate.getHours().toLocaleString('en-GB', {minimumIntegerDigits: 2, useGrouping:false}) + ":"  
+                + currentDate.getMinutes().toLocaleString('en-GB', {minimumIntegerDigits: 2, useGrouping:false})
+
+                return dateTime;
+        }
+
+        //Select Portal
         $('#portals').on("click", "button",function () {
           console.log('portal clicked');
         })
 
         });
         
+        //Populate portal list
         $( document ).ready(function() {
           $("#portals").append(' <button id="0">Portal 1</button>')
           $("#portals").append(' <button id="1">Portal 2</button>')
         });
 
-        // function userNamePresent() {
-        //   if ($('#username').val() != '') {
-        //     return true;
-        //   }
-        //   else{
-        //     return false;
-        //   }
-        // }
 
       </script>
 
+      <!-- test scripts -->
+      <div id="mocha"></div>
+      <script src="https://unpkg.com/chai/chai.js"></script>
+      <script src="https://unpkg.com/mocha/mocha.js"></script>
+      <script class="mocha-init">
+        mocha.setup('tdd');
+        mocha.checkLeaks();
+      </script>
+      <script>
+        
+        
+        var testCount = 0;
+        var testPassed = 0;
+      suite("Tests", function() {
+        
+
+        test("If chat window is empty", function() {
+          //testCount++;
+          chai.assert.equal($('#output').html(), "", "Chat window is not empty")
+          
+        });
+
+        test("If users is zero", function() {
+          testCount++;
+          if (chai.assert.equal($('#userCount').text(), "0 users", "There is not zero users")){
+            testPassed++;
+          }
+        });
+
+        test("If Username field is empty", function() {
+          testCount++;
+          if (chai.assert.equal($('#username').val(), '', "Username field is not empty")){
+            testPassed++;
+          }
+          
+        });
+
+        
+        test("If Message field is empty", function() {
+          testCount++;
+          if (chai.assert.equal($('#message').val(), '', "Username field is not empty")){
+            testPassed++;
+          }
+        });
+          
+        
+  
+      });
+      console.log('Tests: ' + testPassed + ' out of ' + testCount + ' tests passed')
+      </script>
+      <script class="mocha-exec">
+        mocha.run();
+    </script>
   </body>
 </html>
