@@ -2,6 +2,8 @@
 <html>
   <head>
     <title>Portal</title>
+
+    <!-- CSS -->
     <style>
       body{
         font-family: 'Nunito';
@@ -96,15 +98,17 @@
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   </head>
+
   <body>
     
+      <!-- Chatroom Window -->
     <div id="chat">
-      <h2>My Chat</h2><p id="userCount" style="float: right;padding-right: 10px;">0 users</p>
-      <p id="portal-description">This is a good portal</p>
+      <h2>My Portal</h2><p id="userCount" style="float: right;padding-right: 10px;">0 users</p>
+      <p id="portal-description">This is a portal</p>
       <div id="chat-window">
           <div id="output"></div>
           <div id="feedback"></div>
@@ -112,19 +116,20 @@
       <input id="username" type="text" placeholder="Username" autocomplete="off" />
       <input id="message" type="text" placeholder="Message" autocomplete="off" />
       <button id="send">Send</button>
-  </div>
-
-  <div id="PortalRoom">
-    <h2>Portals</h2>
-    <div id="portal-window">
-        <div id="portals"></div>
     </div>
 
-    <h2 style="font-size: smaller;">Portal Info</h2>
-    <input id="portalName" type="text" placeholder="Portal Name" autocomplete="off" />
-    <input id="portalDescription" type="text" placeholder="Description" autocomplete="off" />
-    <button id="send">Join</button>
-</div>
+    <!-- Joining/Creating Portals Section -->
+    <div id="PortalRoom">
+      <h2>Portals</h2>
+      <div id="portal-window">
+          <div id="portals"></div>
+      </div>
+
+      <h2 style="font-size: smaller;">Portal Info</h2>
+      <input id="portalName" type="text" placeholder="Portal Name" autocomplete="off" />
+      <input id="portalDescription" type="text" placeholder="Description" autocomplete="off" />
+      <button id="join">Join</button>
+    </div>
 
     <!-- main scripts -->
     <script>
@@ -226,9 +231,16 @@
         //Select Portal
         $('#portals').on("click", "button",function () {
           console.log('portal clicked');
-        })
-
         });
+
+   
+
+        //Join Portal
+        $('#join').click(function(e){
+          console.log('Join clicked');
+        });
+
+      
         
         //Populate portal list
         $( document ).ready(function() {
@@ -236,61 +248,82 @@
           $("#portals").append(' <button id="1">Portal 2</button>')
         });
 
+      });
 
       </script>
 
       <!-- test scripts -->
       <div id="mocha"></div>
-      <script src="https://unpkg.com/chai/chai.js"></script>
+      <!-- <script src="https://unpkg.com/chai/chai.js"></script>
       <script src="https://unpkg.com/mocha/mocha.js"></script>
       <script class="mocha-init">
         mocha.setup('tdd');
         mocha.checkLeaks();
-      </script>
+      </script> -->
       <script>
         
         
         var testCount = 0;
         var testPassed = 0;
-      suite("Tests", function() {
+      //suite("Tests", function() {
         
 
-        test("If chat window is empty", function() {
-          //testCount++;
-          chai.assert.equal($('#output').html(), "", "Chat window is not empty")
+        // test("If chat window is empty", function() {
+        //   //testCount++;
+        //   chai.assert.equal($('#output').html(), "", "Chat window is not empty")
           
-        });
+        // });
 
-        test("If users is zero", function() {
-          testCount++;
-          if (chai.assert.equal($('#userCount').text(), "0 users", "There is not zero users")){
-            testPassed++;
-          }
-        });
+        testCount++;
+        if ($('#output').html() == "") {
+          testPassed++;
+        }
 
-        test("If Username field is empty", function() {
-          testCount++;
-          if (chai.assert.equal($('#username').val(), '', "Username field is not empty")){
-            testPassed++;
-          }
+        testCount++;
+        if ($('#userCount').text() == "0 users") {
+          testPassed++;
+        }
+
+        testCount++;
+        if ($('#username').val() == '') {
+          testPassed++;
+        }
+
+        testCount++;
+        if ($('#message').val() == '') {
+          testPassed++;
+        }
+
+        // test("If users is zero", function() {
+        //   testCount++;
+        //   if (chai.assert.equal($('#userCount').text(), "0 users", "There is not zero users")){
+        //     testPassed++;
+        //   }
+        // });
+
+        // test("If Username field is empty", function() {
+        //   testCount++;
+        //   if (chai.assert.equal($('#username').val(), '', "Username field is not empty")){
+        //     testPassed++;
+        //   }
           
-        });
+        // });
 
         
-        test("If Message field is empty", function() {
-          testCount++;
-          if (chai.assert.equal($('#message').val(), '', "Username field is not empty")){
-            testPassed++;
-          }
-        });
+        // test("If Message field is empty", function() {
+        //   testCount++;
+        //   if (chai.assert.equal($('#message').val(), '', "Username field is not empty")){
+        //     testPassed++;
+        //   }
+        // });
           
         
   
-      });
+      //});
       console.log('Tests: ' + testPassed + ' out of ' + testCount + ' tests passed')
       </script>
-      <script class="mocha-exec">
+      <!-- <script class="mocha-exec">
         mocha.run();
-    </script>
+    </script> -->
   </body>
 </html>

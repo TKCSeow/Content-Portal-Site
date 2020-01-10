@@ -10,7 +10,7 @@ const url = 'mongodb://127.0.0.1:27017/messages'
 var database;
 
 var userCount = 0;
-var messages = [];
+var messagesTemp = [];
 
 //******************************* */
 //Express
@@ -38,6 +38,28 @@ db.on('error', err => {
   console.error('connection error:', err)
 })
 
+//Set Message model
+var Message = mongoose.model("Messages",
+{username: String, messageBody: String, dateTime: String});
+
+//Read database for messages
+//To disable loading old messages on server restart, comment out the next 12 lines (47 to 58)
+Message.find(function(err, message) {
+
+  for (let index = 0; index < message.length; index++) {
+    //Format data into an object
+    var tempMessage = {userName: message[index].username, message: message[index].messageBody, time: message[index].dateTime};
+    console.log(tempMessage);
+
+    //Add to array to be displayed on startup/load
+    messagesTemp.push(tempMessage);
+  }
+    
+});
+
+
+
+
 //******************************* */
 //Websockets
 //******************************* */
@@ -49,19 +71,30 @@ io.on('connection', function(socket){
   io.emit('user count', userCount);
 
   //Send Old Messages
-  io.emit('load messages', messages);
+  io.emit('load messages', messagesTemp); //Emits messages in temp array
 
-  //Receive a message
+  //Receiving a message from client
   socket.on('chat message', function(msg){
-    messages.push(msg); //add to list
-    io.emit('chat message', msg); //send to everyone
+    messagesTemp.push(msg); //add to list
+
+    //Save Message to database
+    var newMessage = new Message({username: msg.userName,
+      messageBody: msg.message, dateTime: msg.time});
+      newMessage.save(function(err) {
+        console.log("Message Saved");
+        });
+        
+      console.log(newMessage);
+      
+    //Send message to everyone
+    io.emit('chat message', msg); 
   });
 
   //Typing Feedback
   socket.on('typing', function(data){
     // console.log('someone is typing');
     io.emit('typing', data);
-});
+  });
 
   
   //On Disconnect
